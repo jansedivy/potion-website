@@ -2,8 +2,7 @@
 
 var Potion = require('potion');
 
-var renderer = new PIXI.WebGLRenderer();
-document.querySelector('.game').appendChild(renderer.view);
+var app;
 
 var Bunny = function() {
   this.x = 0;
@@ -11,7 +10,11 @@ var Bunny = function() {
   this.speedX = 0;
   this.speedY = 0;
 
-  this.object = new PIXI.Sprite(app.texture);
+  this.object = new PIXI.Sprite(app.assets.get('bunny.png'));
+
+  this.object.scale.set(0.5 + Math.random() * 0.5);
+  this.object.rotation = Math.random() - 0.5;
+
   app.stage.addChild(this.object);
 };
 
@@ -41,41 +44,39 @@ Bunny.prototype.update = function() {
   this.object.position.y = this.y;
 };
 
-var app = Potion.init(document.querySelector('.game'), {
+app = Potion.init(document.querySelector('.game'), {
   configure: function() {
     this.setSize(800, 600);
     this.config.useRetina = false;
-    this.config.initializeCanvas = false;
+    this.config.getCanvasContext = false;
 
-    this.assets.load('image', 'bunny.png');
+    this.renderer = new PIXI.WebGLRenderer(this.width, this.height, { resolution: this.config.useRetina ? 2 : 1, view: this.canvas });
+
+    this.assets.addLoader('pixi', function(url, callback) {
+      this.assets._loaders.image(url, function(image) {
+        callback(new PIXI.Texture(new PIXI.BaseTexture(image)));
+      });
+    }.bind(this));
+
+    this.assets.load('pixi', 'bunny.png');
   },
 
-  gravity: 0.75,
-
   init: function() {
+    this.gravity = 0.75;
     this.amount = 50;
     this.maxX = 800;
     this.minX = 0;
     this.maxY = 600;
     this.minY = 0;
-    this.startBunnyCount = 2;
 
-    this.texture = PIXI.Texture.fromImage('bunny.png');
     this.bunnys = [];
     this.stage = new PIXI.Stage();
-
-    for (var i=0; i<this.startBunnyCount; i++) {
-      var bunny = new Bunny();
-      bunny.speedX = Math.random() * 10;
-      bunny.speedY = (Math.random() * 10) - 5;
-      this.bunnys.push(bunny);
-    }
 
     this.counter = document.createElement('div');
     this.counter.className = 'counter';
     document.querySelector('.container').appendChild(this.counter);
 
-    this.count = this.startBunnyCount;
+    this.count = 0;
     this.counter.innerHTML = this.count + ' BUNNIES';
   },
 
@@ -100,7 +101,7 @@ var app = Potion.init(document.querySelector('.game'), {
   },
 
   render: function() {
-    renderer.render(this.stage);
+    this.renderer.render(this.stage);
   }
 });
 

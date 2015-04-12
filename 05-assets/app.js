@@ -5,6 +5,14 @@ var app = Potion.init(document.querySelector('.game'), {
     this.assets.load('text', 'textfile.txt');
     this.assets.load('image', 'bunny.png');
     this.assets.load('json', 'data.json');
+
+    for (var i=0; i<100; i++) {
+      this.assets.load(function(done) {
+        setTimeout(function() {
+          done('test');
+        }, i);
+      });
+    }
   },
 
   mousedown: function() {
