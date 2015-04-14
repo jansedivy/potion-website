@@ -37,7 +37,7 @@ Particle.prototype.update = function(time) {
   this.x += this.dx * time;
   this.y += this.dy * time;
 
-  this.object.scale.set(this.r / 2);
+  this.object.scale.set(this.r / 10);
   this.object.position.x = this.x;
   this.object.position.y = this.y;
 };
@@ -84,7 +84,7 @@ app = Potion.init(document.querySelector('.game'), {
 
       for (var i=0; i<100; i++) {
         var angle = Math.random() * Math.PI*2;
-        var distance = Math.random() * 200 + 4;
+        var distance = Math.random() * 40;
 
         var particle = new Particle(Math.cos(angle) * distance + app.input.mouse.x, Math.sin(angle) * distance + app.input.mouse.y);
 
