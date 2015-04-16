@@ -17,6 +17,9 @@ var Particle = function(x, y) {
 
   this.object = new PIXI.Sprite(app.assets.get('particle.png'));
   this.object.tint = 0xffffff * Math.random();
+  this.object.scale.set(this.r / 10);
+  this.object.position.x = this.x;
+  this.object.position.y = this.y;
 
   this.object.blendMode = PIXI.blendModes.ADD;
 
@@ -76,6 +79,17 @@ app = Potion.init(document.querySelector('.game'), {
 
     this.particles = [];
     this.stage = new PIXI.Stage(0x080a25);
+
+    window.addEventListener('resize', function() {
+      this.setSize(document.body.clientWidth, document.body.clientHeight);
+    }.bind(this));
+  },
+
+  resize: function() {
+    this.centerX = this.width/2;
+    this.centerY = this.height/2;
+
+    this.renderer.resize(this.width, this.height);
   },
 
   update: function(time) {
